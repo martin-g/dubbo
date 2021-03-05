@@ -50,7 +50,7 @@ public class RedisRegistryTest {
     @BeforeEach
     public void setUp() throws Exception {
         int redisPort = NetUtils.getAvailablePort();
-        RedisServerBuilder builder = RedisServer.builder().port(redisPort);
+        RedisServerBuilder builder = RedisServer.newRedisServer().port(redisPort);
         if (SystemUtils.IS_OS_WINDOWS) {
             // set maxheap to fix Windows error 0x70 while starting redis
             builder.setting("maxheap 128mb");
