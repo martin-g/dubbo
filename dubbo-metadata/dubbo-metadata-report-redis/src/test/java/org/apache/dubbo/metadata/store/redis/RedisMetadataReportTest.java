@@ -35,7 +35,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisDataException;
 import redis.embedded.RedisServer;
-import redis.embedded.RedisServerBuilder;
+import redis.embedded.core.RedisServerBuilder;
 
 import java.io.IOException;
 import java.util.HashMap;

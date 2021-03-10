@@ -23,12 +23,11 @@ import org.apache.dubbo.registry.NotifyListener;
 import org.apache.dubbo.registry.Registry;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.embedded.RedisServer;
-import redis.embedded.RedisServerBuilder;
+import redis.embedded.core.RedisServerBuilder;
 
 import java.util.List;
 import java.util.Map;
