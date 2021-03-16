@@ -132,6 +132,7 @@
         <jetcd_version>0.5.3</jetcd_version>
         <nacos_version>1.3.1</nacos_version>
         <grpc.version>1.31.1</grpc.version>
+        <groovy.version>2.5.13</groovy.version>
         <!-- Log libs -->
         <slf4j_version>1.7.25</slf4j_version>
         <jcl_version>1.2</jcl_version>
@@ -700,6 +701,13 @@
                 <artifactId>grpc-grpclb</artifactId>
                 <version>${grpc.version}</version>
             </dependency>
+            <!-- Groovy, for Embedded Consul -->
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-xml</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>io.fabric8</groupId>
                 <artifactId>kubernetes-client</artifactId>
