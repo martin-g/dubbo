@@ -423,6 +423,20 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>aarch64</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <!-- embedded-redis does not come with redis-server for Linux ARM64,
+                so we need to install an OS package and use it, e.g. for Ubuntu: apt install redis-server -->
+                <com.github.codemonstur.embedded-redis>/usr/bin/redis-server</com.github.codemonstur.embedded-redis>
+            </properties>
+        </profile>
     </profiles>
 
     <build>
