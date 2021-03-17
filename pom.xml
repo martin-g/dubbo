@@ -100,6 +100,7 @@
         <argline>-server -Xms256m -Xmx512m -Dfile.encoding=UTF-8
             -Djava.net.preferIPv4Stack=true -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=128m
         </argline>
+        <extra.surefire.argline></extra.surefire.argline>
         <skip_maven_deploy>false</skip_maven_deploy>
         <updateReleaseInfo>true</updateReleaseInfo>
         <project.build.sourceEncoding>${file_encoding}</project.build.sourceEncoding>
@@ -434,7 +435,7 @@
             <properties>
                 <!-- embedded-redis does not come with redis-server for Linux ARM64,
                 so we need to install an OS package and use it, e.g. for Ubuntu: apt install redis-server -->
-                <com.github.codemonstur.embedded-redis>/usr/bin/redis-server</com.github.codemonstur.embedded-redis>
+                <extra.surefire.argline>-Dcom.github.codemonstur.embedded-redis=/usr/bin/redis-server</extra.surefire.argline>
             </properties>
         </profile>
     </profiles>
@@ -481,7 +482,7 @@
                 <configuration>
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <forkMode>once</forkMode>
-                    <argLine>${argline} ${jacocoArgLine}</argLine>
+                    <argLine>${argline} ${jacocoArgLine} ${extra.surefire.argline}</argLine>
                     <systemProperties>
                         <!-- common shared -->
                     </systemProperties>
