@@ -701,7 +701,9 @@
                 <artifactId>grpc-grpclb</artifactId>
                 <version>${grpc.version}</version>
             </dependency>
-            <!-- Groovy, for Embedded Consul -->
+            <!-- Groovy, for Embedded Consul. Could be removed once embedded-consul:2.2.1 is released
+             See https://github.com/pszymczyk/embedded-consul/pull/114
+             -->
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-xml</artifactId>
