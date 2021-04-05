@@ -1,0 +1,14 @@
+##
+## This docker file will build a base image for building Apache Dubbo
+##
+FROM arm64v8/ubuntu:focal
+
+COPY dubbo /dubbo
+COPY dubbo-spring-boot-project /dubbo-spring-boot-project
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+        apt-get install -y openjdk-8-jdk
+
+ENTRYPOINT [ "/dubbo/.github/scripts/build-and-test.sh" ]

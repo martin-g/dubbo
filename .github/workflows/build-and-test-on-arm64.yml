@@ -1,0 +1,86 @@
+name: Build and test Apache Dubbo on ARM64 at Huawei Cloud
+
+on: [push, pull_request, workflow_dispatch]
+
+env:
+  FORK_COUNT: 2
+  FAIL_FAST: 0
+  SHOW_ERROR_DETAIL: 1
+  #multi-version size limit
+  VERSIONS_LIMIT: 4
+  CANDIDATE_VERSIONS: '
+    spring.version:4.3.30.RELEASE;
+    spring-boot.version:1.5.22.RELEASE;
+    spring-boot.version:2.4.1;
+    '
+  DUBBO_SPRING_BOOT_REF: '2.7.x'
+
+jobs:
+  update-docker-image:
+    name: Update Dubbo build images
+    if: github.repository == 'martin-g/dubbo'
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        type: [ aarch64-ubuntu-20.04 ]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: dubbo
+
+      - uses: actions/checkout@v2
+        with:
+          repository: 'apache/dubbo-spring-boot-project'
+          ref: ${{env.DUBBO_SPRING_BOOT_REF}}
+          path: dubbo-spring-boot-project
+
+      - name: Docker login
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Calculate the base image name
+        id: base
+        run: |
+          echo "::set-output name=BASE_TAG::ghcr.io/${{ github.repository }}/${{ matrix.type }}"
+
+      - name: Enable QEMU/binfmt
+        run: |
+          docker run --rm --privileged multiarch/qemu-user-static --credential yes --persistent yes
+
+      - name: Build base ${{ matrix.type }} image
+        run: |
+          docker build --pull --tag ${{ steps.base.outputs.BASE_TAG }}:${{ github.sha }} \
+            --cache-from ${{ steps.base.outputs.BASE_TAG }} \
+            --file dubbo/.github/dockerfiles/Dockerfile.${{ matrix.type }} \
+            .
+
+      - name: Push ${{ matrix.type }} image
+        run: docker push ${{ steps.base.outputs.BASE_TAG }}:${{ github.sha }}
+
+      - name: "Install kubectl"
+        uses: azure/setup-kubectl@v1
+#        run: |
+#          curl -sL https://dl.k8s.io/v1.20.5/kubernetes-client-linux-amd64.tar.gz | tar zx -C $HOME/
+#          export PATH=PATH:$HOME/kubernetes/client/bin
+
+      - name: Setup Huawei Cloud K8S environment
+        uses: huaweicloud/cce-cluster-credentials@v1
+        with:
+          region: "${{ secrets.REGION }}"
+          access-key-id: "${{ secrets.ACCESS_KEY_ID }}"
+          access-key-secret: "${{ secrets.SECRET_ACCESS_KEY }}"
+          project-id: "${{ secrets.PROJECT_ID }}"
+          cluster-id: "${{ secrets.CLUSTER_ID }}"
+
+      - name: Run build and tests
+        run: |-
+          kubectl config use-context external
+          kubectl run dubbo-on-arm64-${{ github.run_id }} --rm -i --image ${{ steps.base.outputs.BASE_TAG }}:${{ github.sha }}  --restart=Never --tty=false
+          STATUS=$?
+          echo "Status: $STATUS"
+          if [[ $STATUS -ne 0 ]]; then echo "Falsing..."; /bin/false; fi
