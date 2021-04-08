@@ -36,13 +36,6 @@ jobs:
           ref: ${{env.DUBBO_SPRING_BOOT_REF}}
           path: dubbo-spring-boot-project
 
-      - name: Docker login
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
       - name: Calculate the base image name
         id: base
         run: |
@@ -59,14 +52,18 @@ jobs:
             --file dubbo/.github/dockerfiles/Dockerfile.${{ matrix.type }} \
             .
 
+      - name: Docker login
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
       - name: Push ${{ matrix.type }} image
         run: docker push ${{ steps.base.outputs.BASE_TAG }}:${{ github.sha }}
 
       - name: "Install kubectl"
         uses: azure/setup-kubectl@v1
-#        run: |
-#          curl -sL https://dl.k8s.io/v1.20.5/kubernetes-client-linux-amd64.tar.gz | tar zx -C $HOME/
-#          export PATH=PATH:$HOME/kubernetes/client/bin
 
       - name: Setup Huawei Cloud K8S environment
         uses: huaweicloud/cce-cluster-credentials@v1
